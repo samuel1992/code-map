@@ -1,4 +1,6 @@
-from parser import get_definition
+import pytest
+
+from parser import get_definition, CodeLine
 
 
 def test_class_definitions():
@@ -35,3 +37,59 @@ def test_variable_definitions():
 
 def test_operation_definition():
     pass
+
+
+class TestCodeLine:
+    def test_fetch_indentation(self):
+        line = '    return "bla bla"'
+        code_line = CodeLine(line)
+        code_line.fetch_indentation()
+
+        assert code_line.indents == 1
+
+    def test_fetch_multiple_indentation(self):
+        line = '            return "bla bla"'
+        code_line = CodeLine(line)
+        code_line.fetch_indentation()
+
+        assert code_line.indents == 3
+
+    def test_fetch_dedentation(self):
+        line_before = '        return "bla"'
+        line = '    else:'
+
+        previous_code_line = CodeLine(line_before)
+        previous_code_line.fetch_indentation()
+
+        code_line = CodeLine(line)
+        code_line.fetch_indentation()
+        code_line.fetch_dedentation(previous_code_line)
+
+        assert code_line.indents == 1
+        assert code_line.dedents == 1
+
+    def test_fetch_multiple_dedentation(self):
+        line_before = '    return "bla"'
+        line = 'class Something:'
+
+        previous_code_line = CodeLine(line_before)
+        previous_code_line.fetch_indentation()
+
+        code_line = CodeLine(line)
+        code_line.fetch_indentation()
+        code_line.fetch_dedentation(previous_code_line)
+
+        assert code_line.indents == 0
+        assert code_line.dedents == 1
+
+    def test_fetch_dedentation_raises_not_indents_error(self):
+        line_before = '    return "bla"'
+        line = 'class Something:'
+
+        previous_code_line = CodeLine(line_before)
+        previous_code_line.fetch_indentation()
+
+        code_line = CodeLine(line)
+
+        with pytest.raises(Exception):
+            code_line.fetch_dedentation(previous_code_line)
