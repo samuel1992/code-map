@@ -5,8 +5,9 @@ class CodeLine:
     """
     Represent a line of code
     """
-    def __init__(self, raw_line: str):
+    def __init__(self, raw_line: str, parent: 'CodeLine' = None):
         self.raw_line = raw_line
+        self.parent = parent
         self.indents = None
         self.dedents = None
         self.definition = None
@@ -83,6 +84,10 @@ class Parser:
 
     @property
     def lines(self):
+        # TODO: when we find some increate in the indentation comparing with
+        # the line before, go until you find the parent of that line
+        # ex: a method has a class as parent
+
         lines = []
         raw_lines = [i for i in self.raw_code.split('\n') if i]
 
@@ -130,7 +135,9 @@ class SecondClass:
 
         file = MY_TYPES[type]
 
-        return FirstClass(query=query, file=file)
+        return FirstClass(
+            query=query, file=file
+        )
 
     def _private_method(self):
         a = 1
