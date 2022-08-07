@@ -9,6 +9,33 @@ class CodeLine:
         self.raw_line = raw_line
         self.indents = None
         self.dedents = None
+        self.definition = None
+
+    def fetch_definition(self) -> str:
+        """
+        Receive a line of code and fetch what that line is:
+            - class
+            - method
+            - function
+            - variable assignment
+            - operation
+        """
+        line = self.raw_line.lstrip()
+
+        if re.match(r'^class\ .*', line):
+            self.definition = 'class'
+
+        elif re.match(r'^def\ .*\([self|cls].*', line):
+            self.definition = 'method'
+
+        elif re.match(r'^def\ .*\(?\)', line):
+            self.definition = 'function'
+
+        elif re.match(r'.*\=.*', line):
+            self.definition = 'variable'
+
+        else:
+            self.definition = 'operation'
 
     def fetch_indentation(self):
         """
@@ -44,7 +71,9 @@ class CodeLine:
         return (
             f'{break_line}'
             f'{self.raw_line} ==> '
-            f'(indents: {self.indents or 0}, dedents: {self.dedents or 0})'
+            f'(indents: {self.indents or 0}, '
+            f'dedents: {self.dedents or 0}, '
+            f'definition: {self.definition})'
         )
 
 
@@ -58,12 +87,11 @@ class Parser:
         raw_lines = [i for i in self.raw_code.split('\n') if i]
 
         for i, line in enumerate(raw_lines):
-            if i == 0:
-                code_line = CodeLine(line)
-                code_line.fetch_indentation()
-            else:
-                code_line = CodeLine(line)
-                code_line.fetch_indentation()
+            code_line = CodeLine(line)
+            code_line.fetch_indentation()
+            code_line.fetch_definition()
+
+            if i != 0:
                 code_line.fetch_dedentation(lines[i - 1])
 
             lines.append(code_line)
@@ -71,47 +99,21 @@ class Parser:
         return lines
 
 
-def get_definition(line: str) -> str:
-    """
-    Receive a line of code and return what that line is:
-        - class
-        - method
-        - function
-        - variable assignment
-        - operation
-    """
-    line = line.lstrip()
-
-    if re.match(r'^class\ .*', line):
-        return 'class'
-
-    if re.match(r'^def\ .*\([self|cls].*', line):
-        return 'method'
-
-    if re.match(r'^def\ .*\(?\)', line):
-        return 'function'
-
-    if re.match(r'.*\=.*', line):
-        return 'variable'
-
-    return 'operation'
-
-
 code = """
 import os
 
 from collections import namedtuple
 
-from .config import ASTERISK_FILES
+from .config import MyConfiguration
 
 
-class AsteriskFile:
+class FirstClass:
     def __init__(self, query, file):
         self._query = query
         self._file = file
 
-    # TODO: I let the content accessible if we want to run some test on it
-    # we could validade the content with a more 'integration test' like
+    # Some comment here
+    # some more comment ---> here
     @property
     def content(self):
         return self._file.template.render(query=self._query)
@@ -121,14 +123,21 @@ class AsteriskFile:
             file.write(self.content)
 
 
-class Writer:
+class SecondClass:
     @staticmethod
     def generate(type, query):
-        assert type in ASTERISK_FILES
+        assert type in MY_TYPES
 
-        file = ASTERISK_FILES[type]
+        file = MY_TYPES[type]
 
-        return AsteriskFile(query=query, file=file)
+        return FirstClass(query=query, file=file)
+
+    def _private_method(self):
+        a = 1
+        b = 2
+        a + b
+        a += b
+        return a
 """
 
 
