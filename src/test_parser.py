@@ -66,7 +66,7 @@ class TestCodeLine:
         code_line = CodeLine(class_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'CLASS'
+        assert code_line.definition == Types.klass.name
 
     def test_class_with_inheritance_definition(self):
         class_definition_with_inheritance = 'class SomeClass(MotherClass):'
@@ -74,7 +74,7 @@ class TestCodeLine:
         code_line = CodeLine(class_definition_with_inheritance)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'CLASS'
+        assert code_line.definition == Types.klass.name
 
     def test_method_definition(self):
         method_definition = 'def somemethod(self, a, b, c):'
@@ -82,7 +82,7 @@ class TestCodeLine:
         code_line = CodeLine(method_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'METHOD'
+        assert code_line.definition == Types.method.name
 
     def test_method_definition_class_method(self):
         class_method_definition = 'def somemethod(cls, a, b):'
@@ -90,7 +90,7 @@ class TestCodeLine:
         code_line = CodeLine(class_method_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'METHOD'
+        assert code_line.definition == Types.method.name
 
     def test_function_definition(self):
         function_definition = 'def somefunction():'
@@ -98,7 +98,7 @@ class TestCodeLine:
         code_line = CodeLine(function_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'FUNCTION'
+        assert code_line.definition == Types.function.name
 
     def test_function_definition_with_parameters(self):
         function_with_parameters_definition = 'def somefunction(a, b, c):'
@@ -106,7 +106,7 @@ class TestCodeLine:
         code_line = CodeLine(function_with_parameters_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'FUNCTION'
+        assert code_line.definition == Types.function.name
 
     def test_variable_definition(self):
         variable_definition = 'some = some'
@@ -114,7 +114,7 @@ class TestCodeLine:
         code_line = CodeLine(variable_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'VARIABLE'
+        assert code_line.definition == Types.variable.name
 
     def test_variable_definition_without_space(self):
         variable_without_space_definition = 'some=some'
@@ -122,10 +122,31 @@ class TestCodeLine:
         code_line = CodeLine(variable_without_space_definition)
         code_line.fetch_definition()
 
-        assert code_line.definition == 'VARIABLE'
+        assert code_line.definition == Types.variable.name
+
+    def test_loop_definition(self):
+        loop = 'for i in range(1,2):'
+
+        code_line = CodeLine(loop)
+        code_line.fetch_definition()
+
+        assert code_line.definition == Types.loop.name
+
+    def test_conditional_definition(self):
+        conditional = 'if something and another:'
+
+        code_line = CodeLine(conditional)
+        code_line.fetch_definition()
+
+        assert code_line.definition == Types.conditional.name
 
     def test_operation_definition(self):
-        pass
+        operation = '1 + a / SomeClass()'
+
+        code_line = CodeLine(operation)
+        code_line.fetch_definition()
+
+        assert code_line.definition == Types.operation.name
 
 
 class TestCodeBlock:
@@ -166,17 +187,17 @@ class TestCodeBlock:
         return lines
 
     def test_code_block_identification(self, _lines):
-        code_block = CodeBlock(definition=Types.klass)
-        assert code_block.definition == Types.klass
+        code_block = CodeBlock(definition=Types.klass.name)
+        assert code_block.definition == Types.klass.name
 
     def test_code_block_add_lines(self, _lines):
-        code_block = CodeBlock(Types.klass, indents=0)
+        code_block = CodeBlock(Types.klass.name, indents=0)
         code_block.add_lines(lines=_lines)
 
         assert len(code_block.lines) == 17
 
     def test_code_block_raises_when_try_to_add_unfetched_lines(self):
-        code_block = CodeBlock(Types.function)
+        code_block = CodeBlock(Types.function.name)
         lines = [CodeLine('def something():')]
 
         with pytest.raises(AssertionError):

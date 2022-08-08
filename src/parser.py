@@ -25,41 +25,29 @@ class CodeLine:
         """
         line = self.raw_line.lstrip()
 
-        if re.match(r'^#\ .*\([self|cls].*', line):
-            self.definition = Types.comment
+        if re.match(Types.comment.regex, line):
+            self.definition = Types.comment.name
 
-        elif re.match(r'^"""\ .*', line):
-            self.definition = Types.comment
+        elif re.match(Types.klass.regex, line):
+            self.definition = Types.klass.name
 
-        elif re.match(r"^'''\ .*", line):
-            self.definition = Types.comment
+        elif re.match(Types.method.regex, line):
+            self.definition = Types.method.name
 
-        elif re.match(r'^class\ .*', line):
-            self.definition = Types.klass
+        elif re.match(Types.function.regex, line):
+            self.definition = Types.function.name
 
-        elif re.match(r'^def\ .*\([self|cls].*', line):
-            self.definition = Types.method
+        elif re.match(Types.variable.regex, line):
+            self.definition = Types.variable.name
 
-        elif re.match(r'^def\ .*\(?\)', line):
-            self.definition = Types.function
+        elif re.match(Types.conditional.regex, line):
+            self.definition = Types.conditional.name
 
-        elif re.match(r'.*\=.*', line):
-            self.definition = Types.variable
-
-        elif re.match(r'.*if.*', line):
-            self.definition = Types.conditional
-
-        elif re.match(r'.*else.*', line):
-            self.definition = Types.conditional
-
-        elif re.match(r'.*while.*', line):
-            self.definition = Types.conditional
-
-        elif re.match(r'.*for.*', line):
-            self.definition = Types.loop
+        elif re.match(Types.loop.regex, line):
+            self.definition = Types.loop.name
 
         else:
-            self.definition = Types.operation
+            self.definition = Types.operation.name
 
     def fetch_indentation(self):
         """
@@ -122,9 +110,9 @@ class CodeBlock:
     The code blocks type are defined in this class on a constant
     """
     types = [
-        Types.klass,
-        Types.method,
-        Types.function
+        Types.klass.name,
+        Types.method.name,
+        Types.function.name,
     ]
 
     def __init__(
