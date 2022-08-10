@@ -29,6 +29,7 @@ class CodeObject:
         self.indents = indents
         self.dedents = dedents
         self.lines = []
+        self.parent = None
         self.definition = None
 
     def fetch_definition(self):
@@ -36,10 +37,14 @@ class CodeObject:
         self.definition = self.lines[0].definition
 
     @property
+    def raw_line(self):
+        return self.lines[0].raw_line
+
+    @property
     def name(self):
         first_line = self.lines[0].raw_line
-        result = re.search(r'\ [a-zA-Z0-9]+', first_line)
-        return result.group(0).strip()
+        result = re.search(r'[def|class]+\ +[a-z|A-Z|0-9|_]+', first_line)
+        return result.group(0).strip().split(' ')[-1]
 
     def _add(self, line: CodeLine):
         assert line.indents is not None
