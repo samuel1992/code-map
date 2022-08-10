@@ -45,9 +45,10 @@ class Parser:
 
                 self.objects.append(code_object)
 
-                self._lines_set_parent(self.lines[line.number:], code_object)
+                self._lines_set_parent(code_object.lines, code_object)
 
     def fetch_methods_or_functions(self):
+        # TODO: add methods as objects
         for line in self.lines:
             if line.definition == Types.definition.name:
                 if (

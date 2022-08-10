@@ -63,3 +63,6 @@ class CodeObject:
 
     def __str__(self):
         return f'\n{self.name} (definition: {self.definition})'
+
+    def __repr__(self):
+        return f'<object {self.name}>'
