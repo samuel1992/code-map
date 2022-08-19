@@ -35,7 +35,12 @@ class Parser:
     def fetch_imports(self):
         for line in self.lines:
             if line.definition == Types.imports.name:
-                self.imports.append(line)
+                code_object = CodeObject(line.indents, line.dedents)
+                code_object.add_lines([line])
+                code_object.fetch_definition()
+                code_object.fetch_name()
+
+                self.objects.append(code_object)
 
     def fetch_classes(self):
         for line in self.lines:
@@ -43,6 +48,7 @@ class Parser:
                 code_object = CodeObject(line.indents, line.dedents)
                 code_object.add_lines(self.lines[line.number:])
                 code_object.fetch_definition()
+                code_object.fetch_name()
 
                 self.objects.append(code_object)
 
@@ -63,6 +69,7 @@ class Parser:
                 code_object = CodeObject(line.indents, line.dedents)
                 code_object.add_lines(self.lines[line.number:])
                 code_object.fetch_definition()
+                code_object.fetch_name()
 
                 self.objects.append(code_object)
 

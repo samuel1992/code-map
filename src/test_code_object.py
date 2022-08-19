@@ -61,3 +61,41 @@ class TestCodeObject:
 
         with pytest.raises(AssertionError):
             code_object.add_lines(lines)
+
+    def test_code_object_fetch_name(self, _lines):
+        code_object = CodeObject(indents=1)
+        code_object.add_lines(_lines[1:])
+        code_object.fetch_definition()
+        code_object.fetch_name()
+
+        assert code_object.name == '__init__'
+
+    def test_code_object_fetch_name__import_object(self):
+        _lines = [
+            CodeLine(
+                'import Bar', 0
+            ).fetch_indentation().fetch_dedentation(None).fetch_definition()
+        ]
+
+        code_object = CodeObject(indents=0)
+        code_object.add_lines(_lines)
+
+        code_object.fetch_definition()
+        code_object.fetch_name()
+
+        assert code_object.name == 'Bar'
+
+    def test_code_object_fetch_name__import_from_object(self):
+        _lines = [
+            CodeLine(
+                'from foo.bar import Bar', 0
+            ).fetch_indentation().fetch_dedentation(None).fetch_definition()
+        ]
+
+        code_object = CodeObject(indents=0)
+        code_object.add_lines(_lines)
+
+        code_object.fetch_definition()
+        code_object.fetch_name()
+
+        assert code_object.name == 'Bar'

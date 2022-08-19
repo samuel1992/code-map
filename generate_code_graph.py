@@ -4,6 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from src.parser import Parser
+from src._types import Types
 
 from fixtures.sample_code import code
 
@@ -17,12 +18,19 @@ class GraphVisualization:
         self.visual.append(temp)
 
     def visualize(self):
-        G = nx.Graph()
+        G = nx.DiGraph()
         G.add_edges_from(self.visual)
-        nx.draw_networkx(G)
+        nx.draw_circular(G,
+                         with_labels=True,
+                         width=1,
+                         node_size=1000,
+                         font_size=10,
+                         arrowstyle='-|>',
+                         arrowsize=12)
         plt.show()
 
 
+# Need to improve how to find external references
 def _line_external_references(line, objects):
     found = []
     for _object in objects:

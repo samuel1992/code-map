@@ -31,20 +31,29 @@ class CodeObject:
         self.lines = []
         self.parent = None
         self.definition = None
-
-    def fetch_definition(self):
-        assert self.lines, 'CodeObject must have lines to fetch its definition'
-        self.definition = self.lines[0].definition
+        self.name = None
 
     @property
     def raw_line(self):
         return self.lines[0].raw_line
 
-    @property
-    def name(self):
-        first_line = self.lines[0].raw_line
-        result = re.search(r'[def|class]+\ +[a-z|A-Z|0-9|_]+', first_line)
-        return result.group(0).strip().split(' ')[-1]
+    def fetch_definition(self):
+        assert self.lines, 'CodeObject must have lines to fetch its definition'
+        self.definition = self.lines[0].definition
+
+    def fetch_name(self):
+        if self.definition in (Types.definition.name,
+                               Types.function.name,
+                               Types.method.name,
+                               Types.klass.name):
+            regex = r'.*[def|class]+\ +[a-z|A-Z|0-9|_]+|'
+            result = re.search(regex, self.raw_line)
+            self.name = result.group(0).strip().split(' ')[-1]
+
+        elif self.definition == Types.imports.name:
+            regex = r'import\ +[a-z|A-Z|0-9|_]+.*'
+            result = re.search(regex, self.raw_line)
+            self.name = result.group(0).strip().split(' ')[-1]
 
     def _add(self, line: CodeLine):
         assert line.indents is not None

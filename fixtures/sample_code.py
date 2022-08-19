@@ -4,7 +4,7 @@ import sys
 
 from collections import namedtuple
 
-from .config import MyConfiguration
+from .config import MyConfiguration as _configuration
 
 
 class FirstClass:
@@ -16,7 +16,8 @@ class FirstClass:
     # some more comment ---> here
     @property
     def content(self):
-        FourthClass() + FifthClass()
+        a = _configuration().get_a()
+        FourthClass(a) + FifthClass()
         return self._file.template.render(query=self._query)
 
     def method_with_conditions(self):
@@ -63,11 +64,16 @@ class ThirdClass:
 
         return 'another bla'
 
+
 class FourthClass:
-    pass
+    def first_method(self):
+        # Just a fake call to os module
+        return os.path.currentpath()
+
 
 class FifthClass:
-    pass
+    def first_method(self):
+        return sys.argv[0]
 
 
 def some_function():
@@ -75,5 +81,4 @@ def some_function():
     b = SecondClass()
 
     return a + b
-
 """

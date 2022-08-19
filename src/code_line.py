@@ -15,7 +15,7 @@ class CodeLine:
         self.dedents = None
         self.definition = None
 
-    def fetch_definition(self) -> str:
+    def fetch_definition(self) -> 'CodeLine':
         """
         Receive a line of code and fetch what that line is:
             - class
@@ -52,14 +52,20 @@ class CodeLine:
         else:
             self.definition = Types.operation.name
 
-    def fetch_indentation(self):
+        return self
+
+    def fetch_indentation(self) -> 'CodeLine':
         """
         Reads the raw code and count how many identation we have on it
         """
         indentation_groups = re.findall(r'\ \ \ \ ', self.raw_line)
         self.indents = len(indentation_groups)
 
-    def fetch_dedentation(self, previous_code_line: 'CodeLine' = None):
+        return self
+
+    def fetch_dedentation(
+        self, previous_code_line: 'CodeLine' = None
+    ) -> 'CodeLine':
         """
         Reads the raw code, count the indentation and compare with the
         previous line of code
@@ -67,7 +73,7 @@ class CodeLine:
         self.dedents = 0
 
         if previous_code_line is None:
-            return
+            return self
 
         if self.indents is None:
             raise Exception(
@@ -79,6 +85,8 @@ class CodeLine:
             and previous_code_line.indents > self.indents
         ):
             self.dedents = previous_code_line.indents - self.indents
+
+        return self
 
     def __str__(self):
         """
