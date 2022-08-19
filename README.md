@@ -1,5 +1,77 @@
 The main goal is to parse a python file and show the relations between the classes, methods, functions etc.
 
-### A humble sample of what this script intends to acomplish:
+### A sample of what the script can generate now:
 
 ![plot sample](doc/images/plot_sample.png)
+
+This graph was based on the following code:
+
+```python
+import os
+import sys
+
+from collections import namedtuple
+from .config import MyConfiguration
+
+class FirstClass:
+    def __init__(self, query, file):
+        self._query = query
+        self._file = file
+        
+    # Some comment here
+    # another comment line
+    @property
+    def content(self):
+        FourthClass() + FifthClass()
+        return self._file.template.render(query=self._query)
+        
+    def method_with_conditions(self):
+        if self._query:
+            return 'query'
+        else:
+            return 'no query'
+            
+    def save(self):
+        with open(self._file.path, 'w') as file:
+            file.write(self.content)
+           
+variable_a = 'something'
+
+class SecondClass:
+    @staticmethod
+    def generate(type, query):
+        assert type in MY_TYPES
+        file = MY_TYPES[type]
+        return FirstClass(
+            query=query, file=file
+        )
+        
+    def _private_method(self):
+        something = ThirdClass() + FirstClass()
+        a = shomething(1)
+        b = 2
+        a + b
+        a += b
+        return a
+        
+        
+class ThirdClass:
+    def somethign(self):
+        return 'bla'
+        
+    def another_method(self, param):
+        if param:
+            return 'bla'
+        return 'another bla'
+        
+class FourthClass:
+    pass
+    
+class FifthClass:
+    pass
+    
+def some_function():
+    a = FirstClass()
+    b = SecondClass()
+    return a + b
+```
