@@ -25,7 +25,7 @@ class CodeObject:
         Types.definition.name,
     ]
 
-    def __init__(self, indents: int = None, dedents: int = None):
+    def __init__(self, indents: int, dedents: int):
         self.indents = indents
         self.dedents = dedents
         self.lines = []

@@ -1,4 +1,3 @@
-code = """
 import os
 import sys
 
@@ -81,4 +80,3 @@ def some_function():
     b = SecondClass()
 
     return a + b
-"""

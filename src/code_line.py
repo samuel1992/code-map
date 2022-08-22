@@ -24,7 +24,7 @@ class CodeLine:
             - operation
         """
         if self.definition is not None:
-            return
+            return self
 
         line = self.raw_line.lstrip()
 
@@ -63,9 +63,7 @@ class CodeLine:
 
         return self
 
-    def fetch_dedentation(
-        self, previous_code_line: 'CodeLine' = None
-    ) -> 'CodeLine':
+    def fetch_dedentation(self, previous_code_line: 'CodeLine') -> 'CodeLine':
         """
         Reads the raw code, count the indentation and compare with the
         previous line of code
